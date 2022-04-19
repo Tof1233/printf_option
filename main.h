@@ -2,11 +2,7 @@
 #define PRINTF_H
 
 #include <stdlib.h>
-#include <unistd.h>
-#include <stdio.h>
 #include <stdarg.h>
-#include <limits.h>
-
 /**
  * struct printHandler - struct to choose the right function depending
  * on the format specifier passed to _printf()
