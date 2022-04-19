@@ -12,5 +12,6 @@ void _count(int *ptr, char *str)
 	for (i = 0; str[i] != '\0'; i++)
 	{
 		*ptr += 1;
+		_putchar(*ptr);
 	}
 }
