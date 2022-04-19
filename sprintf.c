@@ -1,6 +1,10 @@
 #include "main.h"
 
-
+/**
+ * _srintf - returns length infut string
+ * @format: string that contains the format to print
+ * Return: number of characters written
+ */
 void _sprintf(const char *str)
 {
 	int i, len = 0;
