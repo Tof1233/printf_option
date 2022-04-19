@@ -10,6 +10,6 @@
 void _sprintf(const char *str);
 int _printf(const char *format, ...);
 void _count(int *ptr, char *str);
-
+void *malloc_checked(unsigned int b);
 
 #endif
