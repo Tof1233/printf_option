@@ -67,7 +67,6 @@ int _printf(const char *format, ...)
 			dest[k] = '\0';
 			_count(&counter, dest);
 			_sprintf(dest);
-			free(dest);
 		}
 	}
 
