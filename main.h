@@ -9,14 +9,8 @@
  * @c: format specifier
  * @f: pointer to the correct printing function
  */
-typedef struct printHandler
-{
-	char c;
-	unsigned int (*f)(va_list ap);
-} ph
 
-int _printf(const char *fmt, ...); 
-unsigned int (*get_print(char s))(); 
+int _printf(const char *fmt, ...);  
 unsigned int print_string(va_list l);
 unsigned int print_char(va_list l);
 unsigned int _putchar(char c);
