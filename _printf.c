@@ -1,48 +1,74 @@
 #include "main.h"
+#include "main.h"
 
 /**
- * _printf - produces output according to a format
- * @fmt: format string containing the characters and the specifiers
- * Description: this function will call the get_print() function that will
- * determine which printing function to call depending on the conversion
- * specifiers contained into fmt
- * Return: length of the formatted output string
+ * _printf - prints formatted data to stdout
+ * @format: string that contains the format to print
+ * Return: number of characters written
  */
-int _printf(const char *fmt, ...)
+int _printf(const char *format, ...)
 {
-	if (!fmt || !_strcmp(fmt, "%"))
-		return (-1);
-	unsigned int (*pfunc)(va_list);
-	const char *p;
-	int count = 0;
-	va_list arguments;
+	va_list ap;
+	int i = 0, len = 0, k, j, counter = 0;	
+	char *dest = NULL;
+	char *argStr;
+	
+	while (format[len] != '\0')
+		len++;
 
-	va_start(arguments, fmt);
-	for (p = fmt; *p; p++)
+	dest = malloc(sizeof(char) * len);
+	if (dest == NULL)
+		exit(1);
+
+	va_start(ap, format);
+	while (format[i] != '\0')
 	{
-		if (*p == '%')
+		if (format[i] == '%' && format[i + 1] == 'c')
 		{
-			p++;
-			if (*p == '%')
+			argStr = malloc(sizeof(char) * 2);
+			argStr[0] = (char)va_arg(ap, int);
+			argStr[1] = '\0';
+			_count(&counter, argStr);
+			_sprintf(argStr);
+			free(argStr);
+			i += 2;
+		}
+		else if (format[i] == '%' && format[i + 1] == '%')
+		{
+			argStr = malloc(sizeof(char) * 2);
+			argStr[0] = '%';
+			argStr[1] = '\0';
+			_count(&counter, argStr);
+			_sprintf(argStr);
+			free(argStr);
+			i += 2;
+		}
+		else if (format[i] == '%' && format[i + 1] == 's')
+		{
+			argStr = va_arg(ap, char *);
+            		_count(&counter, argStr);
+            		_sprintf(argStr);
+            		i += 2;
+		}
+		else
+		{
+			for (j = i, k = 0; format[j] != '\0' ; k++, j++, i++)
 			{
-				_putchar('%');
-				count++;
-				continue;
+				if (format[j] == '%')
+				{
+					i = j;
+					break;
+				}
+				else
+				{
+					dest[k] = format[j];
+				}
 			}
-			pfunc = get_print(*p);
-			if (!pfunc)
-			{
-				_putchar('%');
-				_putchar(*p);
-				count += 2;
-			} else
-				count += pfunc(arguments);
-		} else
-		{
-			count++;
-			_putchar(*p);
+			dest[k] = '\0';
+			_count(&counter, dest);
+			_sprintf(dest);
 		}
 	}
-	va_end(arguments);
-	return (count);
+
+	return (counter);
 }
