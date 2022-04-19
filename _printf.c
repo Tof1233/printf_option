@@ -1,28 +1,69 @@
 #include "main.h"
 
-/**
- * _printf - Receives the main string and all the necessary parameters to
- * print a formated string
- * @format: A string containing all the desired characters
- * Return: A total count of the characters printed
- */
+
 int _printf(const char *format, ...)
 {
-	int printed_chars;
-	conver_t f_list[] = {
-		{"c", print_char},
-		{"s", print_string},
-		{"%", print_percent},
-		{NULL, NULL}
-	};
-	va_list arg_list;
+	va_list ap;
+	int i = 0, len = 0, k, j, counter = 0;	
+	char *dest = NULL;
+	char *argStr;
+	
+	while (format[len] != '\0')
+		len++;
 
-	if (format == NULL)
-		return (-1);
+	dest = malloc(sizeof(char) * len);
+	if (dest == NULL)
+		exit(1);
 
-	va_start(arg_list, format);
-	/*Calling parser function*/
-	printed_chars = parser(format, f_list, arg_list);
-	va_end(arg_list);
-	return (printed_chars);
+	va_start(ap, format);
+	while (format[i] != '\0')
+	{
+		if (format[i] == '%' && format[i + 1] == 'c')
+		{
+			argStr = malloc(sizeof(char) * 2);
+			argStr[0] = (char)va_arg(ap, int);
+			argStr[1] = '\0';
+			_count(&counter, argStr);
+			_sprintf(argStr);
+			free(argStr);
+			i += 2;
+		}
+		else if (format[i] == '%' && format[i + 1] == '%')
+		{
+			argStr = malloc(sizeof(char) * 2);
+			argStr[0] = '%';
+			argStr[1] = '\0';
+			_count(&counter, argStr);
+			_sprintf(argStr);
+			free(argStr);
+			i += 2;
+		}
+		else if (format[i] == '%' && format[i + 1] == 's')
+		{
+			argStr = va_arg(ap, char *);
+            		_count(&counter, argStr);
+            		_sprintf(argStr);
+            		i += 2;
+		}
+		else
+		{
+			for (j = i, k = 0; format[j] != '\0' ; k++, j++, i++)
+			{
+				if (format[j] == '%')
+				{
+					i = j;
+					break;
+				}
+				else
+				{
+					dest[k] = format[j];
+				}
+			}
+			dest[k] = '\0';
+			_count(&counter, dest);
+			_sprintf(dest);
+		}
+	}
+
+	return (counter);
 }
