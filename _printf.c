@@ -47,7 +47,6 @@ int _printf(const char *format, ...)
 			argStr = va_arg(ap, char *);
             		_count(&counter, argStr);
             		_sprintf(argStr);
-			free(argStr);
             		i += 2;
 		}
 		else
