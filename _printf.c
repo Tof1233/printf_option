@@ -1,73 +1,123 @@
+#include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
+#include <stdlib.h>
+#include <limits.h>
 #include "main.h"
 
-/**
- * _printf - prints formatted data to stdout
- * @format: string that contains the format to print
- * Return: number of characters written
- */
 int _printf(const char *format, ...)
 {
-	va_list ap;
-	int i = 0, len = 0, k, j, counter = 0;	
-	char *dest = NULL;
-	char *argStr;
-	
-	while (format[len] != '\0')
-		len++;
+   if ( format == NULL )
+      return 0;
 
-	dest = malloc(sizeof(char) * len);
-	if (dest == NULL)
-		exit(1);
+   va_list valist;
+   va_start(valist, format);
 
-	va_start(ap, format);
-	while (format[i] != '\0')
-	{
-		if (format[i] == '%' && format[i + 1] == 'c')
-		{
-			argStr = malloc(sizeof(char) * 2);
-			argStr[0] = (char)va_arg(ap, int);
-			argStr[1] = '\0';
-			_count(&counter, argStr);
-			_sprintf(argStr);
-			free(argStr);
-			i += 2;
-		}
-		else if (format[i] == '%' && format[i + 1] == '%')
-		{
-			argStr = malloc(sizeof(char) * 2);
-			argStr[0] = '%';
-			argStr[1] = '\0';
-			_count(&counter, argStr);
-			_sprintf(argStr);
-			free(argStr);
-			i += 2;
-		}
-		else if (format[i] == '%' && format[i + 1] == 's')
-		{
-			argStr = va_arg(ap, char *);
-            		_count(&counter, argStr);
-            		_sprintf(argStr);
-            		i += 2;
-		}
-		else
-		{
-			for (j = i, k = 0; format[j] != '\0' ; k++, j++, i++)
-			{
-				if (format[j] == '%')
-				{
-					i = j;
-					break;
-				}
-				else
-				{
-					dest[k] = format[j];
-				}
-			}
-			dest[k] = '\0';
-			_count(&counter, dest);
-			_sprintf(dest);
-		}
-	}
+   int num = 0;
+   char *token = NULL;
+   int i = 0;
+   int len = strlen(format);
+   int nprinted = 0;
+   int found = 0;
+   
+   while ( format[i] != '\0' )
+   {
+       num = 0;
+       found = 0;
+       token = NULL;
 
-	return (counter);
+       if ( ( format[i] == '%' ) && ( ( i + 1 ) < len ) )
+       {
+          switch ( format[i+1] )
+          {
+             case 'd':
+                     {
+                        found = 1;
+
+                        int str[40];
+                        int j = 0;
+
+                        num = va_arg(valist, int);
+
+                        int temp = num;
+
+			  if ( num < 0 )
+                           num = -num;
+
+                        while ( num != 0 )
+                        {
+                           str[j++] = (num % 10);
+                           num /= 10;
+                        }
+
+                        if ( temp < 0 )
+                            str[j++] = '-';
+                        
+                        nprinted += j;
+                        j--;
+                        
+                        while ( j >= 0 )
+                        {
+                           if ( str[j] != '-' )
+                              putchar(str[j--] + '0');
+                           else
+                              putchar(str[j--]);
+                        }
+                     }
+                     break;
+ 
+             case 's':
+                     {
+                        found = 1;
+
+                        token = va_arg(valist, char *);
+                        if ( token != NULL )
+                        {
+                           int j = 0;
+
+                           while ( token[j] != '\0' )
+                           {
+                              nprinted++;
+                              putchar(token[j]);
+                              j++;
+                           }
+                        }
+                     }
+                     break;
+                case 'c':
+                     {
+                        found = 1;
+                        //char t = &
+
+                        char tokc = (char)va_arg(valist, int );
+                        if ( tokc != '\0' )
+                        {
+                           int j = 0;
+
+                             // nprinted++;
+                              putchar(tokc);
+                            
+                        }
+                     }
+                     break;
+          }
+
+          if ( found != 0 )
+          {
+             i += 2;
+             continue;
+          }
+          
+       }
+   
+       putchar(format[i]);
+       nprinted++;
+
+       i++;
+   }
+
+   
+   va_end(valist);
+
+   return nprinted;
 }
